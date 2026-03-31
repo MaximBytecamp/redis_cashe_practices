@@ -18,8 +18,7 @@ logger = logging.getLogger("cache")
 
 TTL_TABLE: dict[str, tuple(int, int)] = {
     "hot": (120, 180),
-    ""
-    "": (60, 80),
+    "normal": (60, 80),
     "rare": (30, 50)
 }
 
