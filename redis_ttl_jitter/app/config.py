@@ -20,7 +20,10 @@ class Settings(BaseSettings):
     redis_db: int
 
     base_ttl: int = 60          # секунд
-    jitter_max: int = 20        # максимальное отклонен
+    jitter_max: int = 20        # максимальное отклонение
+
+    db_delay_min: float = 0.1   # мин. задержка эмуляции БД
+    db_delay_max: float = 0.3   # макс. задержка эмуляции БД
 
 
     app_host: str = "0.0.0.0"
