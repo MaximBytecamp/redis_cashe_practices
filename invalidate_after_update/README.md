@@ -11,7 +11,6 @@ FastAPI · Redis 7 · SQLite (aiosqlite) · SQLAlchemy 2 async · Pydantic v2.
 - [Требования](#требования)
 - [Установка и запуск](#установка-и-запуск)
 - [Запуск тестовых сценариев](#запуск-тестовых-сценариев)
-- [API Endpoints](#api-endpoints)
 - [Структура проекта](#структура-проекта)
 
 ---
@@ -115,28 +114,6 @@ python run_scenarios.py
 ```bash
 python run_scenarios.py --scenario 3
 ```
-
----
-
-## API Endpoints
-
-### Чтение (GET)
-
-| Метод | Путь                            | Описание
-|-------|
-| `GET` | `/health`                       | Проверка сервера и Redis 
-| `GET` | `/products`                     | Все товары 
-| `GET` | `/products/{id}`                | Карточка одного товара 
-| `GET` | `/products/category/{category}` | Товары по категории 
-| `GET` | `/products/stats`               | Статистика по товарам 
-
-### Запись (PUT / PATCH)
-
-| Метод   |Путь                                 | Описание 
-|-------  |
-| `PUT`   | `/products/{id}`                    | Обновить товар + invalidate 
-| `PATCH` | `/products/category/{cat}/discount` | Скидка на категорию + групповая инвалидация 
-
 
 
 ---
