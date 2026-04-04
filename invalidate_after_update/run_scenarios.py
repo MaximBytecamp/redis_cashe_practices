@@ -49,7 +49,7 @@ def check(condition: bool, msg: str) -> bool:
 
 
 def section(title: str):
-    console.print(f"\n  📋 {title}", style="bold cyan")
+    console.print(f"\n  {title}", style="bold cyan")
 
 
 # Сценарий 1: Stale cache БЕЗ invalidate
@@ -93,9 +93,7 @@ async def scenario_1(client: httpx.AsyncClient) -> bool:
     return ok
 
 
-# ═══════════════════════════════════════════════════════════
 # Сценарий 2: Корректная инвалидация
-# ═══════════════════════════════════════════════════════════
 
 async def scenario_2(client: httpx.AsyncClient) -> bool:
     """Актуальные данные с invalidate."""
@@ -130,9 +128,7 @@ async def scenario_2(client: httpx.AsyncClient) -> bool:
     return ok
 
 
-# ═══════════════════════════════════════════════════════════
 # Сценарий 3: Инвалидация списка после обновления цены
-# ═══════════════════════════════════════════════════════════
 
 async def scenario_3(client: httpx.AsyncClient) -> bool:
     """Инвалидация списка после обновления цены одного товара."""
@@ -179,9 +175,7 @@ async def scenario_3(client: httpx.AsyncClient) -> bool:
     return ok1 and ok2
 
 
-# ═══════════════════════════════════════════════════════════
 # Сценарий 4: Смена категории
-# ═══════════════════════════════════════════════════════════
 
 async def scenario_4(client: httpx.AsyncClient) -> bool:
     """Инвалидация при смене категории."""
@@ -233,9 +227,7 @@ async def scenario_4(client: httpx.AsyncClient) -> bool:
     return ok1 and ok2
 
 
-# ═══════════════════════════════════════════════════════════
 # Сценарий 5: Инвалидация статистики
-# ═══════════════════════════════════════════════════════════
 
 async def scenario_5(client: httpx.AsyncClient) -> bool:
     """Инвалидация статистики после обновления."""
@@ -273,9 +265,7 @@ async def scenario_5(client: httpx.AsyncClient) -> bool:
     return ok
 
 
-# ═══════════════════════════════════════════════════════════
 # Сценарий 6: Массовое обновление (скидка на категорию)
-# ═══════════════════════════════════════════════════════════
 
 async def scenario_6(client: httpx.AsyncClient) -> bool:
     """Массовый discount + групповая инвалидация."""
@@ -332,9 +322,7 @@ async def scenario_6(client: httpx.AsyncClient) -> bool:
     return all_ok
 
 
-# ═══════════════════════════════════════════════════════════
 # Сценарий 7: Нагрузочный мини-тест
-# ═══════════════════════════════════════════════════════════
 
 async def scenario_7(client: httpx.AsyncClient) -> bool:
     """100 reads → 1 update → 100 reads. Проверка hit/miss/hit."""
@@ -406,9 +394,7 @@ async def scenario_7(client: httpx.AsyncClient) -> bool:
     return ok1 and ok2
 
 
-# ═══════════════════════════════════════════════════════════
 # Main
-# ═══════════════════════════════════════════════════════════
 
 ALL_SCENARIOS = {
     1: ("Stale cache без invalidate", scenario_1),
@@ -433,7 +419,7 @@ async def main():
     BASE_URL = args.base_url
 
     console.print(Panel.fit(
-        "[bold bright_white]🧪 Cache Invalidate After Update — Тестирование[/bold bright_white]\n\n"
+        "[bold bright_white] Cache Invalidate After Update — Тестирование[/bold bright_white]\n\n"
         f"  Сервер: {BASE_URL}\n"
         f"  Сценариев: {len(ALL_SCENARIOS)}",
         border_style="bright_magenta",
@@ -467,7 +453,7 @@ async def main():
                 console.print(f"  ❌ Сценарий {num} провалился с ошибкой: {e}", style="red bold")
                 results[num] = False
 
-    # ── Итоги ──────────────────────────────────────────────
+    # ── Итоги 
     console.print("\n")
     table = Table(title="📊 Итоги тестирования", show_lines=True)
     table.add_column("#", style="bold", width=4)
