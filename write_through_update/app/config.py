@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     app_host: str = "0.0.0.0"
     app_port: int = 8020
 
-    # ── Режимы для демо-переключения
+    # Режимы для демо-переключения
     write_through_enabled: bool = True    # write-through для карточки
     invalidate_lists: bool = True         # invalidate для списков/stats
     sync_mode: str = "hybrid"             # "write_through" | "invalidate" | "hybrid" | "none"

@@ -12,7 +12,7 @@ from app.models.product import Product
 class ProductRepository:
     """CRUD-операции над таблицей products."""
 
-    # ── READ
+    # READ
 
     @staticmethod
     async def get_by_id(product_id: int) -> dict[str, Any] | None:
