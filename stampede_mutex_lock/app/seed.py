@@ -1,5 +1,3 @@
-"""Seed данных — 20 товаров, 5 категорий."""
-
 from __future__ import annotations
 
 import datetime
@@ -7,7 +5,7 @@ import datetime
 from sqlalchemy import select
 
 from app.db import async_session, engine
-from models.product import Base, Product
+from app.models.product import Base, Product
 
 SAMPLE_PRODUCTS = [
     ("MacBook Pro 16", "Apple M3 Max, 36GB RAM", 3499.00, "laptops", 15, True),
@@ -40,18 +38,23 @@ async def seed_database() -> int:
     async with async_session() as session:
         existing = await session.execute(select(Product.id).limit(1))
         if existing.scalar() is not None:
-            count = (await session.execute(select(Product))).scalars().all()
-            return len(count)
+            count_result = await session.execute(select(Product))
+            return len(count_result.scalars().all())
 
         now = datetime.datetime.utcnow()
         products = []
         for name, desc, price, cat, stock, active in SAMPLE_PRODUCTS:
-            products.append(Product(
-                name=name, description=desc, price=price,
-                category=cat, stock=stock, is_active=active,
-                created_at=now,
-            ))
-
+            products.append(
+                Product(
+                    name=name,
+                    description=desc,
+                    price=price,
+                    category=cat,
+                    stock=stock,
+                    is_active=active,
+                    updated_at=now,
+                )
+            )
         session.add_all(products)
         await session.commit()
         return len(products)

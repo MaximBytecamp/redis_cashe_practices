@@ -25,7 +25,7 @@ class Settings(BaseSettings):
 
     # Bloom filter параметры
     bloom_expected_items: int = 10_000
-    bloom_fp_rate: float = 0.01        # 1% ложных срабатываний
+    bloom_fp_rate: float = 0.01      # 1% ложных срабатываний
     bloom_key: str = "bloom:products"
 
 

@@ -8,7 +8,7 @@ from typing import Any
 from sqlalchemy import select
 
 from app.db import async_session
-from app.models.product import Product
+from models.product import Product
 
 logger = logging.getLogger("repository")
 
