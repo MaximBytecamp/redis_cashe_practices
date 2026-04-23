@@ -29,7 +29,7 @@ class StampedeResult:
         self.lock_owner = lock_owner
 
 
-# ─── Режим 1: без защиты (обычный cache-aside)
+# Режим 1: без защиты (обычный cache-aside)
 
 async def get_product_no_protection(product_id: int) -> StampedeResult:
     """Обычный cache-aside БЕЗ mutex lock."""
@@ -47,32 +47,22 @@ async def get_product_no_protection(product_id: int) -> StampedeResult:
     return StampedeResult(data=data, source="db_direct")
 
 
-# ─── Режим 2: с mutex lock + double-check + retry + fallback ────────
+# Режим 2: с mutex lock + double-check + retry + fallback
 
 async def get_product_with_mutex(product_id: int) -> StampedeResult:
-    """Cache-aside с ПОЛНОЙ stampede-защитой.
-
-    Flow:
-      1. cache check
-      2. miss → try lock (SET NX EX)
-      3a. lock acquired → double-check → DB → cache_set → release lock
-      3b. lock busy     → retry loop (N раз с паузой)
-      4. после retry: если данные не появились → fallback 503
-    """
     key = product_key(product_id)
     lk = product_lock_key(product_id)
 
-    # ── Шаг 1: первая проверка кэша ──
+    # Шаг 1: первая проверка кэша
     cached = await cache_get(key)
     if cached is not None:
         return StampedeResult(data=cached, source="cache")
 
-    # ── Шаг 2: попытка взять lock ──
+    # Шаг 2: попытка взять lock
     owner = uuid.uuid4().hex[:12]
     acquired = await lock_acquire(lk, owner)
 
     if acquired:
-        # ── Шаг 3a: lock получен ──
         try:
             # Double-check: пока мы брали lock, другой поток мог уже
             # записать данные в Redis
@@ -95,18 +85,12 @@ async def get_product_with_mutex(product_id: int) -> StampedeResult:
                 data=data, source="db_via_lock", lock_owner=owner
             )
         finally:
-            # Всегда освобождаем lock (даже при ошибке)
             await lock_release(lk, owner)
     else:
-        # ── Шаг 3b: lock занят → retry loop ──
         return await _retry_loop(product_id, key, lk)
 
 
 async def _retry_loop(product_id: int, key: str, lk: str) -> StampedeResult:
-    """Цикл ожидания: ждём, повторно проверяем Redis.
-
-    Если после max_retries данных нет — fallback.
-    """
     delay_sec = settings.lock_retry_delay_ms / 1000.0
     max_retries = settings.lock_max_retries
 
@@ -128,7 +112,7 @@ async def _retry_loop(product_id: int, key: str, lk: str) -> StampedeResult:
                 data=cached, source="cache_after_retry", retries_used=attempt
             )
 
-    # ── Все retry исчерпаны ──
+    # Все retry исчерпаны
     # Вариант B: попробуем сами взять lock (другой владелец мог упасть)
     owner = uuid.uuid4().hex[:12]
     acquired = await lock_acquire(lk, owner)

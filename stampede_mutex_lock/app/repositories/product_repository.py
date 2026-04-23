@@ -12,11 +12,11 @@ from app.models.product import Product
 
 logger = logging.getLogger("repository")
 
-# ── Атомарный счётчик DB reads (thread-safe)
+# Атомарный счётчик DB reads (thread-safe)
 _lock = threading.Lock()
 _db_read_count: int = 0
 
-# ── Переопределяемая задержка (для тестовых сценариев)
+# Переопределяемая задержка (для тестовых сценариев)
 _simulate_delay: float = settings.db_simulate_delay
 
 

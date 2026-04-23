@@ -1,10 +1,3 @@
-"""Product Service — бизнес-логика получения товара.
-
-Выбирает стратегию (no_protection / mutex_lock) на основе:
-  1. параметра `protection` в запросе
-  2. глобальной настройки settings.stampede_protection_enabled
-"""
-
 from __future__ import annotations
 
 import logging
@@ -22,12 +15,6 @@ logger = logging.getLogger("service")
 async def get_product(
     product_id: int, protection: bool | None = None
 ) -> StampedeResult:
-    """Получить товар с выбранной стратегией.
-
-    Args:
-        product_id: ID товара
-        protection: True/False явно, или None → берём из settings
-    """
     use_protection = (
         protection if protection is not None else settings.stampede_protection_enabled
     )

@@ -1,15 +1,3 @@
-"""Маршруты — товары + debug endpoints.
-
-Endpoints:
-  GET  /products/{id}          — получить товар (query: protection=true/false)
-  POST /debug/flush-cache      — очистить Redis DB
-  POST /debug/reset-counters   — обнулить счётчик DB reads
-  GET  /debug/counters         — текущий счётчик DB reads
-  POST /debug/set-db-delay     — установить имитацию задержки БД
-  POST /debug/toggle-protection — вкл/выкл stampede-защиту
-  GET  /debug/config           — текущие параметры
-"""
-
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, Query
@@ -23,7 +11,7 @@ from app.services.product_service import get_product
 router = APIRouter()
 
 
-# ─── Основной endpoint ───────────────────────────────────────────────
+#Основной endpoint
 
 @router.get("/products/{product_id}")
 async def read_product(
@@ -33,10 +21,6 @@ async def read_product(
         description="true=mutex lock, false=no protection, omit=use global setting",
     ),
 ):
-    """Получить товар по ID.
-
-    Выбор стратегии через query-param `protection` или глобальную настройку.
-    """
     result = await get_product(product_id, protection=protection)
 
     if result.data is None and result.source == "fallback":
@@ -62,7 +46,7 @@ async def read_product(
     }
 
 
-# ─── Debug endpoints ─────────────────────────────────────────────────
+# Debug endpoints
 
 @router.post("/debug/flush-cache")
 async def debug_flush_cache():
@@ -81,6 +65,7 @@ async def debug_counters():
     return {"db_read_count": product_repository.get_db_read_count()}
 
 
+
 class DelayRequest(BaseModel):
     delay: float = 0.0
 
@@ -89,6 +74,7 @@ class DelayRequest(BaseModel):
 async def debug_set_db_delay(req: DelayRequest):
     product_repository.set_simulate_delay(req.delay)
     return {"status": "ok", "db_simulate_delay": req.delay}
+
 
 
 class ToggleProtectionRequest(BaseModel):

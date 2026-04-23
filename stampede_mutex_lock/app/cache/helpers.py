@@ -1,25 +1,3 @@
-"""Кеш-хелперы + mutex lock операции.
-
-Кеш:
-  cache_get(key)    → dict | None
-  cache_set(key, v) → None
-  cache_delete(key) → int
-
-Lock (с owner token для безопасного освобождения):
-  lock_acquire(key, owner)  → bool
-  lock_release(key, owner)  → bool
-  lock_exists(key)          → bool
-
-Логирование:
-  [CACHE HIT]        product:1
-  [CACHE MISS]       product:1
-  [CACHE SET]        product:1  ttl=120s
-  [CACHE DELETE]     product:1
-  [LOCK ACQUIRED]    lock:product:1  owner=abc123  ttl=5s
-  [LOCK BUSY]        lock:product:1  (owner=xyz789 holds it)
-  [LOCK RELEASED]    lock:product:1  owner=abc123
-  [LOCK RELEASE SKIP] lock:product:1  owner mismatch
-"""
 
 from __future__ import annotations
 
@@ -33,7 +11,7 @@ from app.config import settings
 logger = logging.getLogger("cache")
 
 
-# ─── Кеш-операции
+#Кеш-операции
 
 async def cache_get(key: str) -> dict | None:
     r = await get_redis()
@@ -64,7 +42,6 @@ async def cache_delete(key: str) -> int:
     return deleted
 
 
-# ─── Lock-операции (с owner token)
 
 # Lua-скрипт: удалить lock ТОЛЬКО если owner совпадает.
 # Это предотвращает удаление чужого lock-а при гонке.
@@ -112,3 +89,6 @@ async def lock_exists(lock_key: str) -> bool:
     """Проверить, существует ли lock-ключ."""
     r = await get_redis()
     return bool(await r.exists(lock_key))
+
+
+
